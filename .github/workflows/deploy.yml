@@ -1,4 +1,4 @@
-name: CI/CD Pipeline for Wisecow App
+name: CI/CD Pipeline for Wisecow-app1
 
 on:
   push:
@@ -12,14 +12,6 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
 
-      - name: Create necessary directories
-        run: |
-          mkdir -p ${{ github.workspace }}/wisecow-app1  # Using the workspace directory
-
-      - name: Create server.key file
-        run: |
-          echo "" > ${{ github.workspace }}/wisecow-app1/server.key  # Creating the server.key file
-
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
@@ -31,30 +23,36 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-buildx-
 
+      - name: Log in to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v2
+        env:
+          AWS_REGION: eu-north-1  # Correct region set as an environment variable
+
       - name: Build Docker image
         run: |
-          docker build -t yourusername/wisecow:${{ github.sha }} .
+          docker build -t 703671933612.dkr.ecr.ap-southeast-2.amazonaws.com/wisecow-app1:${{ github.sha }} .
 
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-
-      - name: Push Docker image
+      - name: Push Docker image to Amazon ECR
         run: |
-          docker push yourusername/wisecow:${{ github.sha }}
+          docker push 703671933612.dkr.ecr.ap-southeast-2.amazonaws.com/wisecow-app1:${{ github.sha }}
 
   deploy:
     needs: build-and-push
     runs-on: ubuntu-latest
     steps:
-      - name: Set up kubectl
-        uses: azure/setup-kubectl@v3
+      - name: Set up AWS CLI
+        uses: aws-actions/configure-aws-credentials@v2
         with:
-          kubeconfig: ${{ secrets.KUBECONFIG }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-north-1  # Change to your AWS region
 
-      - name: Deploy to Kubernetes
+      - name: Set up kubectl
+        uses: aws-actions/eks-kubeconfig-action@v1
+        with:
+          cluster-name: your-eks-cluster-name  # Replace with your EKS cluster name
+
+      - name: Deploy to Kubernetes (EKS)
         run: |
-          kubectl set image deployment/wisecow-app wisecow-app=<your-container-registry>/wisecow:${{ github.sha }}
-          kubectl rollout status deployment/wisecow-app
+          kubectl set image deployment/wisecow-app1 wisecow-app1=703671933612.dkr.ecr.ap-southeast-2.amazonaws.com/wisecow-app1:${{ github.sha }}
+          kubectl rollout status deployment/wisecow-app1
