@@ -1,18 +1,16 @@
 FROM python:3.9-slim
 
+# Set the working directory inside the container
 WORKDIR /app
 
-COPY requirements.txt .
+# Copy the requirements.txt file to the working directory
+COPY requirements.txt ./
 
-# Install system dependencies (if needed)
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    libssl-dev \
-    && rm -rf /var/lib/apt/lists/*
-
-# Install Python dependencies
+# Install any necessary dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Copy the rest of your application code
 COPY . .
 
+# Command to run the application
 CMD ["python", "app.py"]
