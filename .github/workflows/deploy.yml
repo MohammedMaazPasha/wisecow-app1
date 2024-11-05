@@ -30,11 +30,11 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t 084375568856.dkr.ecr.eu-north-1.amazonaws.com/wisecow:${{ github.sha }} .
+          docker build -t 703671933612.dkr.ecr.ap-southeast-2.amazonaws.com/wisecow:${{ github.sha }} .
 
       - name: Push Docker image to Amazon ECR
         run: |
-          docker push 084375568856.dkr.ecr.eu-north-1.amazonaws.com/wisecow:${{ github.sha }}
+          docker push 703671933612.dkr.ecr.ap-southeast-2.amazonaws.com/wisecow:${{ github.sha }}
 
   deploy:
     needs: build-and-push
@@ -54,5 +54,5 @@ jobs:
 
       - name: Deploy to Kubernetes (EKS)
         run: |
-          kubectl set image deployment/wisecow-app wisecow-app=084375568856.dkr.ecr.eu-north-1.amazonaws.com/wisecow:${{ github.sha }}
+          kubectl set image deployment/wisecow-app wisecow-app=703671933612.dkr.ecr.ap-southeast-2.amazonaws.com/wisecow:${{ github.sha }}
           kubectl rollout status deployment/wisecow-app
