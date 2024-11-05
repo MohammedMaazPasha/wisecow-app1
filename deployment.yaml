@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: wisecow-deployment
+  name: wisecow-app1
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
-      app: wisecow
+      app: wisecow-app1
   template:
     metadata:
       labels:
-        app: wisecow
+        app: wisecow-app1
     spec:
       containers:
-      - name: wisecow
-        image: docker.io/saqlain023/wisecow:latest
+      - name: wisecow-app1
+        image: 703671933612.dkr.ecr.ap-southeast-2.amazonaws.com/wisecow-app1:<your-image-tag>
         ports:
-        - containerPort: 3000
+        - containerPort: 80  # Replace with your actual port
