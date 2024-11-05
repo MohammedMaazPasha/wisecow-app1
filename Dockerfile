@@ -1,22 +1,20 @@
-# Dockerfile
-
-# Use the official Node.js image as a base
-FROM node:14
+# Use an official Python runtime as a parent image (adjust according to your app's requirements)
+FROM python:3.9-slim
 
 # Set the working directory in the container
 WORKDIR /app
 
-# Copy package.json and package-lock.json into the container
-COPY package.json package-lock.json ./
+# Copy the current directory contents into the container at /app
+COPY . /app
 
-# Install the app dependencies
-RUN npm install
+# Install any needed packages specified in requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the rest of the application files
-COPY . .
+# Make port 80 available to the world outside this container
+EXPOSE 80
 
-# Expose the port the app runs on
-EXPOSE 8000
+# Define environment variable (if needed, for example, Flask)
+# ENV FLASK_APP=app.py
 
-# Command to run the app
-CMD ["node", "app.js"]  # Replace 'app.js' with your entry file
+# Run Wisecow application (adjust according to how the app is started)
+CMD ["python", "app.py"]
